@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "458555653650",
+    "project_id": "suchullo-flt",
+    "storage_bucket": "suchullo-flt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:458555653650:android:23d09b659db653fc1ce2cb",
+        "android_client_info": {
+          "package_name": "com.example.scroad_seller_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "458555653650-kpbahajfpp59e2o0if28sh1ub08q4ra0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCy9g6p1boUMvntZ8ph5Omm2CeKUNt4hQM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "458555653650-kpbahajfpp59e2o0if28sh1ub08q4ra0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
