@@ -44,6 +44,7 @@ dependencies:
   syncfusion_flutter_datepicker: ^20.1.58
   carousel_slider: ^4.1.1
   smooth_page_indicator: ^1.0.0+2
+  expandable: ^5.0.1
 
 dev_dependencies:
   flutter_test:

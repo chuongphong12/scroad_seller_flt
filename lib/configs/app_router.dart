@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scroad_seller_flutter/screens/auctions/plate_number_screen.dart';
+import 'package:scroad_seller_flutter/screens/auctions/request_screen.dart';
 import 'package:scroad_seller_flutter/screens/guidance/guidance_screen.dart';
 import 'package:scroad_seller_flutter/screens/home/home_screen.dart';
 import 'package:scroad_seller_flutter/screens/settings/settings_screen.dart';
@@ -11,6 +12,8 @@ class AppRouter {
         return HomeScreen.route();
       case PlateNumberScreen.routeName:
         return PlateNumberScreen.route();
+      case RequestScreen.routeName:
+        return RequestScreen.route();
       case SettingsScreen.routeName:
         return SettingsScreen.route();
       case GuidanceScreen.routeName:

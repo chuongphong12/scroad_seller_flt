@@ -33,77 +33,81 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
-          child: Column(
-            children: [
-              const AvailableCarCheck(),
-              const SizedBox(height: 20),
-              const CreateRequestCard(),
-              const SizedBox(height: 20),
-              Stack(
-                children: [
-                  CarouselSlider.builder(
-                    carouselController: controller,
-                    itemCount: images.length,
-                    itemBuilder:
-                        (BuildContext context, int index, int pageViewIndex) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          images[index],
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    },
-                    options: CarouselOptions(
-                      height: 200,
-                      viewportFraction: 1,
-                      initialPage: 0,
-                      enableInfiniteScroll: true,
-                      reverse: false,
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      enlargeCenterPage: true,
-                      scrollDirection: Axis.horizontal,
-                      onPageChanged:
-                          (int index, CarouselPageChangedReason reason) {
-                        setState(() => currentPos = index);
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 5,
-                    left: MediaQuery.of(context).size.width * 0.5 - 30,
-                    child: AnimatedSmoothIndicator(
-                      activeIndex: currentPos,
-                      count: images.length,
-                      effect: const WormEffect(
-                        dotHeight: 10,
-                        dotWidth: 10,
-                        // strokeWidth: 5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              ReviewCardGrid(images: images)
-            ],
+      body: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+            child: Column(
+              children: [
+                _buildAvailableCarCheck(context),
+                const SizedBox(height: 20),
+                _buildRequestCard(context),
+                const SizedBox(height: 20),
+                _buildHomeSlide(context),
+                const SizedBox(height: 20),
+                _buildReviewCardGrid(context, images),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-}
 
-class CreateRequestCard extends StatelessWidget {
-  const CreateRequestCard({
-    Key? key,
-  }) : super(key: key);
+  Widget _buildHomeSlide(BuildContext context) {
+    return Stack(
+      children: [
+        CarouselSlider.builder(
+          carouselController: controller,
+          itemCount: images.length,
+          itemBuilder: (BuildContext context, int index, int pageViewIndex) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                images[index],
+                fit: BoxFit.cover,
+              ),
+            );
+          },
+          options: CarouselOptions(
+            height: 200,
+            viewportFraction: 1,
+            initialPage: 0,
+            enableInfiniteScroll: true,
+            reverse: false,
+            autoPlayCurve: Curves.fastOutSlowIn,
+            enlargeCenterPage: true,
+            scrollDirection: Axis.horizontal,
+            onPageChanged: (int index, CarouselPageChangedReason reason) {
+              setState(() => currentPos = index);
+            },
+          ),
+        ),
+        Positioned(
+          bottom: 5,
+          left: MediaQuery.of(context).size.width * 0.5 - 30,
+          child: AnimatedSmoothIndicator(
+            activeIndex: currentPos,
+            count: images.length,
+            effect: const WormEffect(
+              dotHeight: 10,
+              dotWidth: 10,
+              // strokeWidth: 5,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildRequestCard(BuildContext context) {
     return Container(
       height: 200,
       decoration: BoxDecoration(
@@ -180,15 +184,8 @@ class CreateRequestCard extends StatelessWidget {
       ),
     );
   }
-}
 
-class AvailableCarCheck extends StatelessWidget {
-  const AvailableCarCheck({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildAvailableCarCheck(BuildContext context) {
     return Container(
       height: 200,
       padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
@@ -279,18 +276,8 @@ class AvailableCarCheck extends StatelessWidget {
       ),
     );
   }
-}
 
-class ReviewCardGrid extends StatelessWidget {
-  const ReviewCardGrid({
-    Key? key,
-    required this.images,
-  }) : super(key: key);
-
-  final List<String> images;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildReviewCardGrid(BuildContext context, List<String> images) {
     return GridView.count(
       shrinkWrap: true,
       crossAxisCount: 2,
