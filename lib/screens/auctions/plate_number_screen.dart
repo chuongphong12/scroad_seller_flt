@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scroad_seller_flutter/blocs/auctions/auction_bloc.dart';
 import 'package:scroad_seller_flutter/extensions/hexadecimal_convert.dart';
+import 'package:scroad_seller_flutter/screens/auctions/request_screen.dart';
 import 'package:scroad_seller_flutter/widgets/custom_app_bar.dart';
 
 class PlateNumberScreen extends StatelessWidget {
@@ -16,7 +19,15 @@ class PlateNumberScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController controller = TextEditingController();
     double height = const CustomAppBar().preferredSize.height;
+
+    void onSubmit() {
+      BlocProvider.of<AuctionBloc>(context)
+          .add(AddPlateNumberEvent(plateNumber: controller.text));
+      Navigator.of(context).pushNamed(RequestScreen.routeName);
+    }
+
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -54,6 +65,7 @@ class PlateNumberScreen extends StatelessWidget {
                     ),
                     const Spacer(),
                     TextFormField(
+                      controller: controller,
                       decoration: InputDecoration(
                         constraints: const BoxConstraints.tightFor(height: 40),
                         border: OutlineInputBorder(
@@ -74,9 +86,7 @@ class PlateNumberScreen extends StatelessWidget {
                         floatingLabelBehavior: FloatingLabelBehavior.never,
                       ),
                       onFieldSubmitted: (String? value) {
-                        Navigator.of(context).pushNamed(
-                          '/guidance',
-                        );
+                        onSubmit();
                       },
                     ),
                   ],
