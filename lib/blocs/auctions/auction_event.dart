@@ -7,6 +7,15 @@ abstract class AuctionEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class InitializeAuctionEvent extends AuctionEvent {
+  final AuctionModel auction;
+
+  const InitializeAuctionEvent({required this.auction});
+
+  @override
+  List<Object> get props => [auction];
+}
+
 class AddPlateNumberEvent extends AuctionEvent {
   final String plateNumber;
 
@@ -17,7 +26,7 @@ class AddPlateNumberEvent extends AuctionEvent {
 }
 
 class AddImagesEvent extends AuctionEvent {
-  final List<Image> images;
+  final Image images;
 
   const AddImagesEvent({required this.images});
 

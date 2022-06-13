@@ -158,10 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Text(
                         '내 차 견적의뢰',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5!
-                            .copyWith(color: Colors.white),
+                        style: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.white),
                       ),
                       const SizedBox(width: 10),
                       const Icon(
@@ -258,10 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   '내 차 수출차 확인',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline5!
-                      .copyWith(color: Colors.white),
+                  style: Theme.of(context).textTheme.headline5!.copyWith(color: Colors.white),
                 ),
                 const SizedBox(width: 10),
                 const Icon(

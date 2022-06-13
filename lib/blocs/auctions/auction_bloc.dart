@@ -8,17 +8,20 @@ part 'auction_state.dart';
 
 class AuctionBloc extends Bloc<AuctionEvent, AuctionState> {
   AuctionBloc() : super(AuctionLoading()) {
+    on<InitializeAuctionEvent>(_onInitAuction);
     on<AddPlateNumberEvent>(_onAddPlateNumber);
     on<AddImagesEvent>(_onAddImages);
     on<LoadAuctionEvent>(_onLoadAuction);
     on<UpdateAuctionStatusEvent>(_onUpdateAuctionStatus);
   }
 
-  void _onAddPlateNumber(
-      AddPlateNumberEvent event, Emitter<AuctionState> emit) async {
+  void _onInitAuction(InitializeAuctionEvent event, Emitter<AuctionState> emit) async {
+    emit(AuctionLoaded(auction: event.auction));
+  }
+
+  void _onAddPlateNumber(AddPlateNumberEvent event, Emitter<AuctionState> emit) async {
     final AuctionModel auction = (state as AuctionLoaded).auction;
     try {
-      emit(AuctionLoading());
       emit(
         AuctionLoaded(
           auction: auction.copyWith(plateNumber: event.plateNumber),
@@ -37,8 +40,7 @@ class AuctionBloc extends Bloc<AuctionEvent, AuctionState> {
     print('LoadAuctionEvent');
   }
 
-  void _onUpdateAuctionStatus(
-      UpdateAuctionStatusEvent event, Emitter<AuctionState> emit) {
+  void _onUpdateAuctionStatus(UpdateAuctionStatusEvent event, Emitter<AuctionState> emit) {
     print('UpdateAuctionStatusEvent');
   }
 }

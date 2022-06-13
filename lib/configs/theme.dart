@@ -3,6 +3,7 @@ import 'package:scroad_seller_flutter/extensions/hexadecimal_convert.dart';
 
 ThemeData theme() {
   return ThemeData(
+    visualDensity: VisualDensity.adaptivePlatformDensity,
     primaryColor: HexColor.fromHex('#ffc000'),
     primaryColorDark: HexColor.fromHex('#fdff73'),
     primaryColorLight: HexColor.fromHex('#ffc519'),

@@ -5,6 +5,7 @@ import 'package:scroad_seller_flutter/blocs/auctions/auction_bloc.dart';
 import 'package:scroad_seller_flutter/configs/app_router.dart';
 import 'package:scroad_seller_flutter/configs/theme.dart';
 import 'package:scroad_seller_flutter/firebase_options.dart';
+import 'package:scroad_seller_flutter/models/auction_model.dart';
 import 'package:scroad_seller_flutter/screens/auctions/plate_number_screen.dart';
 import 'package:scroad_seller_flutter/screens/home/home_screen.dart';
 import 'package:scroad_seller_flutter/simple_bloc_observer.dart';
@@ -31,7 +32,8 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuctionBloc>(
-          create: (context) => AuctionBloc(),
+          create: (context) =>
+              AuctionBloc()..add(const InitializeAuctionEvent(auction: AuctionModel.empty)),
         ),
       ],
       child: MaterialApp(

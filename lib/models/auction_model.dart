@@ -61,4 +61,15 @@ class AuctionModel extends Equatable {
   String toString() {
     return 'AuctionModel(sellerName: $sellerName, sellerPhoneNumber: $sellerPhoneNumber, sellerAddress: $sellerAddress, sellerCity: $sellerCity, description: $description, plateNumber: $plateNumber, auctionStatus: $auctionStatus, images: $images)';
   }
+
+  static const empty = AuctionModel(
+    sellerName: '',
+    sellerPhoneNumber: '',
+    sellerAddress: '',
+    sellerCity: '',
+    description: '',
+    plateNumber: '',
+    auctionStatus: '',
+    images: [],
+  );
 }

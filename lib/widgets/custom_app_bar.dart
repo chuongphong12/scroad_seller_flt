@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:scroad_seller_flutter/screens/auctions/request_screen.dart';
 import 'package:scroad_seller_flutter/screens/guidance/guidance_screen.dart';
+import 'package:scroad_seller_flutter/screens/home/home_screen.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  const CustomAppBar({Key? key, this.title = 'Suchullo'}) : super(key: key);
+  final String pushNavigator;
+  const CustomAppBar({Key? key, this.title = 'Suchullo', this.pushNavigator = ''})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +19,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         title,
         style: Theme.of(context).textTheme.headline2,
       ),
+      leading: (pushNavigator != '')
+          ? BackButton(onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, pushNavigator, (Route<dynamic> route) => false);
+            })
+          : null,
       actions: currentRoute != matchGuidanceRoute
           ? [
               IconButton(
