@@ -7,6 +7,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scroad_seller_flutter/blocs/auctions/auction_bloc.dart';
 import 'package:scroad_seller_flutter/extensions/hexadecimal_convert.dart';
+import 'package:scroad_seller_flutter/models/auction_model.dart';
 import 'package:scroad_seller_flutter/screens/home/home_screen.dart';
 import 'package:scroad_seller_flutter/widgets/custom_app_bar.dart';
 
@@ -27,13 +28,19 @@ class RequestScreen extends StatefulWidget {
 }
 
 class _RequestScreenState extends State<RequestScreen> {
+  List<dynamic> images = [];
   final ImagePicker _imagePicker = ImagePicker();
   File? image;
+
+  final List vehicleTexts = ['정면(필수)', '후면(필수)', '좌측(필수)', '우측(필수)'];
 
   final _formKey = GlobalKey<FormBuilderState>();
 
   @override
   void initState() {
+    for (int i = 0; i < 4; i++) {
+      images.add(const UploadImage(imageName: 'image1'));
+    }
     super.initState();
   }
 
@@ -117,87 +124,213 @@ class _RequestScreenState extends State<RequestScreen> {
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: GridView.count(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  children: List.generate(5, (index) {
-                    return GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.2,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  TextButton(
-                                    onPressed: () async {
-                                      _getImage(ImageSource.gallery);
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      'Open Gallery',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline5!,
+                child: BlocBuilder<AuctionBloc, AuctionState>(
+                  builder: (context, state) {
+                    if (state is AuctionLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    if (state is AuctionLoaded) {
+                      final auction = state.auction;
+                      return GridView.count(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        children: List.generate(images.length, (index) {
+                          if (images[index] is UploadImage) {
+                            UploadImage uploadModel = images[index];
+                            return GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.2,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          TextButton(
+                                            onPressed: () async {
+                                              _getImage(ImageSource.gallery);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              'Open Gallery',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline5!,
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              _getImage(ImageSource.camera);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              'Open Camera',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline5!,
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              'Close',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline5!,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(20)),
+                                  color: HexColor.fromHex('#e3e3e3'),
+                                ),
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Positioned(
+                                      child: Image.asset(
+                                        'assets/images/mountain.png',
+                                        fit: BoxFit.contain,
+                                        height: 50,
+                                        width: 50,
+                                      ),
                                     ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      _getImage(ImageSource.camera);
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      'Open Camera',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline5!,
+                                    Positioned(
+                                      top: 6,
+                                      right: 0,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.3),
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(2.0),
+                                          child: Text('sdfsdf'),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      'Close',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline5!,
-                                    ),
-                                  )
-                                ],
+                                  ],
+                                ),
                               ),
                             );
-                          },
-                        );
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(20)),
-                          color: HexColor.fromHex('#e3e3e3'),
-                        ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Positioned(
-                              child: Image.asset(
-                                'assets/images/mountain.png',
-                                fit: BoxFit.contain,
-                                height: 50,
-                                width: 50,
+                          } else {
+                            return GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.2,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          TextButton(
+                                            onPressed: () async {
+                                              _getImage(ImageSource.gallery);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              'Open Gallery',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline5!,
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              _getImage(ImageSource.camera);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              'Open Camera',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline5!,
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              'Close',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline5!,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(20)),
+                                  color: HexColor.fromHex('#e3e3e3'),
+                                ),
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Positioned(
+                                      child: Image.asset(
+                                        'assets/images/mountain.png',
+                                        fit: BoxFit.contain,
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 6,
+                                      right: 0,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.3),
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(2.0),
+                                          child: Text('sdfsdf'),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
+                            );
+                          }
+                        }).toList(),
+                      );
+                    }
+                    return const Center(
+                      child: Text('차량 정보를 불러오는 중입니다.'),
                     );
-                  }).toList(),
+                  },
                 ),
               ),
               Divider(
@@ -336,28 +469,46 @@ class _RequestScreenState extends State<RequestScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      FormBuilderDropdown(
-                        name: 'district',
-                        items: List.generate(
-                          20,
-                          (index) {
-                            return DropdownMenuItem(
-                              value: index,
-                              child: Text('$index'),
-                            );
-                          },
-                        ),
+                      FormBuilderTextField(
+                        name: 'description',
+                        maxLines: 5,
                         decoration: InputDecoration(
-                          labelText: '주행거리',
+                          labelText: '특이사항',
+                          hintText: '예시 : 오토미션 / 사륜 / 썬루프 / 스마트키 등',
+                          hintStyle:
+                              Theme.of(context).textTheme.headline5!.copyWith(
+                                    color: HexColor.fromHex('b3b3b3'),
+                                    fontWeight: FontWeight.normal,
+                                  ),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: '(필수)',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
                         ),
-                      )
+                        onChanged: (String? newValue) {},
+                        validator: FormBuilderValidators.compose(
+                          [
+                            FormBuilderValidators.required(),
+                            FormBuilderValidators.numeric()
+                          ],
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
                     ],
                   ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    elevation: 6,
+                    minimumSize: const Size(double.maxFinite, 60),
+                    primary: HexColor.fromHex('5260ff'),
+                  ),
+                  child: const Text('견적의뢰'),
                 ),
               )
             ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:scroad_seller_flutter/blocs/auctions/auction_bloc.dart';
 import 'package:scroad_seller_flutter/extensions/hexadecimal_convert.dart';
 import 'package:scroad_seller_flutter/screens/auctions/request_screen.dart';
@@ -20,12 +22,88 @@ class PlateNumberScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController controller = TextEditingController();
+    final ScrollController scrollController = ScrollController();
+
     double height = const CustomAppBar().preferredSize.height;
 
+    final List plateDetailList = [
+      {
+        'title': '조회일자',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '차량번호',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '기준일자',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '차명',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '제조사',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '용도',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '배기량',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '최초보험가입일',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '사용연료',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '차체형상',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '자차피해사고횟수',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '자차피해보험금합',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '일반전손사고건수',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '일반전손사고일수',
+        'value': '2021.01.22',
+      },
+      {
+        'title': '침수전(분)사고건수',
+        'value': '2021.01.22',
+      }
+    ];
+
     void onSubmit() {
-      BlocProvider.of<AuctionBloc>(context)
-          .add(AddPlateNumberEvent(plateNumber: controller.text));
-      Navigator.of(context).pushNamed(RequestScreen.routeName);
+      if (controller.text.isNotEmpty) {
+        context
+            .read<AuctionBloc>()
+            .add(AddPlateNumberEvent(plateNumber: controller.text));
+        Navigator.of(context).pushNamed(RequestScreen.routeName);
+      }
+      if (controller.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Theme.of(context).errorColor,
+            content: const Text('Please enter a plate number'),
+          ),
+        );
+      }
     }
 
     return GestureDetector(
@@ -64,8 +142,14 @@ class PlateNumberScreen extends StatelessWidget {
                           ),
                     ),
                     const Spacer(),
-                    TextFormField(
+                    FormBuilderTextField(
+                      name: 'plateNumber',
                       controller: controller,
+                      validator: FormBuilderValidators.compose(
+                        [
+                          FormBuilderValidators.required(),
+                        ],
+                      ),
                       decoration: InputDecoration(
                         constraints: const BoxConstraints.tightFor(height: 40),
                         border: OutlineInputBorder(
@@ -85,8 +169,20 @@ class PlateNumberScreen extends StatelessWidget {
                         ),
                         floatingLabelBehavior: FloatingLabelBehavior.never,
                       ),
-                      onFieldSubmitted: (String? value) {
+                      onSubmitted: (String? value) {
                         onSubmit();
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(16),
+                              topRight: Radius.circular(16),
+                            ),
+                          ),
+                          builder: (BuildContext context) =>
+                              _buildSheet(context, plateDetailList),
+                        );
                       },
                     ),
                   ],
@@ -96,6 +192,64 @@ class PlateNumberScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  DraggableScrollableSheet _buildSheet(
+      BuildContext context, List<dynamic> plateDetailList) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.9,
+      maxChildSize: 0.9,
+      minChildSize: 0.8,
+      builder: (_, controller) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              '12가 1234',
+              style: Theme.of(context).textTheme.headline3,
+            ),
+            Divider(
+              color: HexColor.fromHex('dfdfdf'),
+              thickness: 1,
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: controller,
+                shrinkWrap: true,
+                itemCount: plateDetailList.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          plateDetailList[index]['title'],
+                          style:
+                              Theme.of(context).textTheme.headline5!.copyWith(
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                        ),
+                        trailing: Text(
+                          plateDetailList[index]['value'],
+                          style:
+                              Theme.of(context).textTheme.headline5!.copyWith(
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                        ),
+                      ),
+                      Divider(
+                        color: HexColor.fromHex('dfdfdf'),
+                        thickness: 1,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }

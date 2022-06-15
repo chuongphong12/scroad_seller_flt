@@ -71,5 +71,6 @@ ThemeData theme() {
       filled: true,
       fillColor: Colors.white,
     ),
+    errorColor: HexColor.fromHex('#e84545'),
   );
 }

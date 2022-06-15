@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 
 class AuctionModel extends Equatable {
   final String sellerName;
@@ -9,7 +10,7 @@ class AuctionModel extends Equatable {
   final String description;
   final String plateNumber;
   final String auctionStatus;
-  final List<Image> images;
+  final List<UploadImage> images;
   const AuctionModel({
     required this.sellerName,
     required this.sellerPhoneNumber,
@@ -29,7 +30,7 @@ class AuctionModel extends Equatable {
     String? description,
     String? plateNumber,
     String? auctionStatus,
-    List<Image>? images,
+    List<UploadImage>? images,
   }) {
     return AuctionModel(
       sellerName: sellerName ?? this.sellerName,
@@ -72,4 +73,27 @@ class AuctionModel extends Equatable {
     auctionStatus: '',
     images: [],
   );
+}
+
+class UploadImage extends Equatable {
+  final File? imageFile;
+  final String imageName;
+
+  const UploadImage({
+    this.imageFile,
+    required this.imageName,
+  });
+
+  UploadImage copyWith({
+    File? imageFile,
+    String? imageName,
+  }) {
+    return UploadImage(
+      imageFile: imageFile ?? this.imageFile,
+      imageName: imageName ?? this.imageName,
+    );
+  }
+
+  @override
+  List<Object> get props => [imageFile!, imageName];
 }
