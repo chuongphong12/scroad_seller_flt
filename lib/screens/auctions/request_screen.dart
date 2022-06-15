@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scroad_seller_flutter/blocs/auctions/auction_bloc.dart';
 import 'package:scroad_seller_flutter/extensions/hexadecimal_convert.dart';
@@ -27,6 +29,9 @@ class RequestScreen extends StatefulWidget {
 class _RequestScreenState extends State<RequestScreen> {
   final ImagePicker _imagePicker = ImagePicker();
   File? image;
+
+  final _formKey = GlobalKey<FormBuilderState>();
+
   @override
   void initState() {
     super.initState();
@@ -74,16 +79,18 @@ class _RequestScreenState extends State<RequestScreen> {
                         if (state is AuctionLoaded) {
                           return Text(
                             state.auction.plateNumber,
-                            style: Theme.of(context).textTheme.headline5!.copyWith(
-                                  color: HexColor.fromHex('bababa'),
-                                ),
+                            style:
+                                Theme.of(context).textTheme.headline5!.copyWith(
+                                      color: HexColor.fromHex('bababa'),
+                                    ),
                           );
                         }
                         return Text(
                           '12가 1234',
-                          style: Theme.of(context).textTheme.headline5!.copyWith(
-                                color: HexColor.fromHex('bababa'),
-                              ),
+                          style:
+                              Theme.of(context).textTheme.headline5!.copyWith(
+                                    color: HexColor.fromHex('bababa'),
+                                  ),
                         );
                       },
                     ),
@@ -135,7 +142,9 @@ class _RequestScreenState extends State<RequestScreen> {
                                     },
                                     child: Text(
                                       'Open Gallery',
-                                      style: Theme.of(context).textTheme.headline5!,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline5!,
                                     ),
                                   ),
                                   TextButton(
@@ -145,7 +154,9 @@ class _RequestScreenState extends State<RequestScreen> {
                                     },
                                     child: Text(
                                       'Open Camera',
-                                      style: Theme.of(context).textTheme.headline5!,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline5!,
                                     ),
                                   ),
                                   TextButton(
@@ -154,7 +165,9 @@ class _RequestScreenState extends State<RequestScreen> {
                                     },
                                     child: Text(
                                       'Close',
-                                      style: Theme.of(context).textTheme.headline5!,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline5!,
                                     ),
                                   )
                                 ],
@@ -165,7 +178,8 @@ class _RequestScreenState extends State<RequestScreen> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20)),
+                          borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(20)),
                           color: HexColor.fromHex('#e3e3e3'),
                         ),
                         child: Stack(
@@ -191,23 +205,20 @@ class _RequestScreenState extends State<RequestScreen> {
                 thickness: 1,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 29),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 29),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '사진을 최소 4장 이상 등록해주세요!',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6!
-                          .copyWith(color: HexColor.fromHex('bababa'), fontSize: 13),
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color: HexColor.fromHex('bababa'), fontSize: 13),
                     ),
                     Text(
                       '여러 각도의 디테일한 사진을 업로드 하시면 더욱 더 정확한 견적금액을 받으실 수 있습니다',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6!
-                          .copyWith(color: HexColor.fromHex('ff8b8b'), fontSize: 13),
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color: HexColor.fromHex('ff8b8b'), fontSize: 13),
                     ),
                   ],
                 ),
@@ -216,6 +227,139 @@ class _RequestScreenState extends State<RequestScreen> {
                 color: HexColor.fromHex('dfdfdf'),
                 thickness: 1,
               ),
+              const SizedBox(height: 40),
+              FormBuilder(
+                key: _formKey,
+                autovalidateMode: AutovalidateMode.disabled,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Column(
+                    children: [
+                      FormBuilderTextField(
+                        name: 'name',
+                        decoration: InputDecoration(
+                          labelText: '판매자',
+                          hintText: '(필수)',
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        onChanged: (String? newValue) {},
+                        validator: FormBuilderValidators.compose(
+                          [
+                            FormBuilderValidators.required(),
+                          ],
+                        ),
+                        keyboardType: TextInputType.text,
+                      ),
+                      const SizedBox(height: 20),
+                      FormBuilderTextField(
+                        name: 'phoneNumber',
+                        decoration: InputDecoration(
+                          labelText: '전화번호',
+                          hintText: '(필수)',
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        onChanged: (String? newValue) {},
+                        validator: FormBuilderValidators.compose(
+                          [
+                            FormBuilderValidators.required(),
+                            FormBuilderValidators.numeric()
+                          ],
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 20),
+                      FormBuilderTextField(
+                        name: 'address',
+                        decoration: InputDecoration(
+                          labelText: '지역',
+                          hintText: '(필수)',
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        onChanged: (String? newValue) {},
+                        validator: FormBuilderValidators.compose(
+                          [
+                            FormBuilderValidators.required(),
+                            FormBuilderValidators.numeric()
+                          ],
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 20),
+                      FormBuilderDropdown(
+                        name: 'province',
+                        items: List.generate(
+                          20,
+                          (index) {
+                            return DropdownMenuItem(
+                              value: index,
+                              child: Text('$index'),
+                            );
+                          },
+                        ),
+                        decoration: InputDecoration(
+                          labelText: '시군구',
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: '(필수)',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      FormBuilderDropdown(
+                        name: 'district',
+                        items: List.generate(
+                          20,
+                          (index) {
+                            return DropdownMenuItem(
+                              value: index,
+                              child: Text('$index'),
+                            );
+                          },
+                        ),
+                        decoration: InputDecoration(
+                          labelText: '주행거리',
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: '(필수)',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      FormBuilderDropdown(
+                        name: 'district',
+                        items: List.generate(
+                          20,
+                          (index) {
+                            return DropdownMenuItem(
+                              value: index,
+                              child: Text('$index'),
+                            );
+                          },
+                        ),
+                        decoration: InputDecoration(
+                          labelText: '주행거리',
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: '(필수)',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
         ),
