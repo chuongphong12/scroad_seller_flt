@@ -28,7 +28,6 @@ class RequestScreen extends StatefulWidget {
 }
 
 class _RequestScreenState extends State<RequestScreen> {
-  List<dynamic> images = [];
   final ImagePicker _imagePicker = ImagePicker();
   File? image;
 
@@ -38,21 +37,22 @@ class _RequestScreenState extends State<RequestScreen> {
 
   @override
   void initState() {
-    for (int i = 0; i < 4; i++) {
-      images.add(const UploadImage(imageName: 'image1'));
-    }
     super.initState();
   }
 
-  Future _getImage(ImageSource source) async {
+  Future _addImageOnClick(ImageSource source, int index) async {
     final selectedImage = await _imagePicker.pickImage(source: source);
-    if (image == null) {
+    if (selectedImage == null) {
       return;
     }
-    final tempImage = File(selectedImage!.path);
-    setState(() {
-      image = File(selectedImage.path);
-    });
+    final tempImage = File(selectedImage.path);
+    _getFileImage(index, tempImage, selectedImage.name);
+  }
+
+  void _getFileImage(int index, File imagePath, String imageName) async {
+    UploadImage imageUpload =
+        UploadImage(imageFile: imagePath, imageName: imageName);
+    context.read<AuctionBloc>().add(AddImagesEvent(images: imageUpload));
   }
 
   @override
@@ -124,213 +124,135 @@ class _RequestScreenState extends State<RequestScreen> {
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: BlocBuilder<AuctionBloc, AuctionState>(
-                  builder: (context, state) {
-                    if (state is AuctionLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    if (state is AuctionLoaded) {
-                      final auction = state.auction;
-                      return GridView.count(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        children: List.generate(images.length, (index) {
-                          if (images[index] is UploadImage) {
-                            UploadImage uploadModel = images[index];
-                            return GestureDetector(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.2,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          TextButton(
-                                            onPressed: () async {
-                                              _getImage(ImageSource.gallery);
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              'Open Gallery',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline5!,
+                child: GridView.count(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  children: List.generate(vehicleTexts.length, (index) {
+                    return BlocBuilder<AuctionBloc, AuctionState>(
+                      builder: (context, state) {
+                        if (state is AuctionLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        if (state is AuctionLoaded) {
+                          return GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.2,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () async {
+                                            _addImageOnClick(
+                                                ImageSource.gallery, index);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            'Open Gallery',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline5!,
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            _addImageOnClick(
+                                                ImageSource.camera, index);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            'Open Camera',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline5!,
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            'Close',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline5!,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: (state.auction.images.isNotEmpty &&
+                                    state.auction.images[index] ==
+                                        vehicleTexts[index])
+                                ? Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.only(
+                                          bottomLeft: Radius.circular(20)),
+                                      color: HexColor.fromHex('#e3e3e3'),
+                                    ),
+                                    child: Image.file(
+                                      state.auction.images[index].imageFile,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.only(
+                                          bottomLeft: Radius.circular(20)),
+                                      color: HexColor.fromHex('#e3e3e3'),
+                                    ),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Positioned(
+                                          child: Image.asset(
+                                            'assets/images/mountain.png',
+                                            fit: BoxFit.contain,
+                                            height: 50,
+                                            width: 50,
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 6,
+                                          right: 0,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  Colors.black.withOpacity(0.3),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
+                                              child: Text(
+                                                vehicleTexts[index],
+                                              ),
                                             ),
                                           ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              _getImage(ImageSource.camera);
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              'Open Camera',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline5!,
-                                            ),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              'Close',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline5!,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.only(
-                                      bottomLeft: Radius.circular(20)),
-                                  color: HexColor.fromHex('#e3e3e3'),
-                                ),
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Positioned(
-                                      child: Image.asset(
-                                        'assets/images/mountain.png',
-                                        fit: BoxFit.contain,
-                                        height: 50,
-                                        width: 50,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 6,
-                                      right: 0,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.3),
                                         ),
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Text('sdfsdf'),
-                                        ),
-                                      ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          } else {
-                            return GestureDetector(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.2,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          TextButton(
-                                            onPressed: () async {
-                                              _getImage(ImageSource.gallery);
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              'Open Gallery',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline5!,
-                                            ),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              _getImage(ImageSource.camera);
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              'Open Camera',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline5!,
-                                            ),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              'Close',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline5!,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.only(
-                                      bottomLeft: Radius.circular(20)),
-                                  color: HexColor.fromHex('#e3e3e3'),
-                                ),
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Positioned(
-                                      child: Image.asset(
-                                        'assets/images/mountain.png',
-                                        fit: BoxFit.contain,
-                                        height: 50,
-                                        width: 50,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 6,
-                                      right: 0,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.3),
-                                        ),
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Text('sdfsdf'),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }
-                        }).toList(),
-                      );
-                    }
-                    return const Center(
-                      child: Text('차량 정보를 불러오는 중입니다.'),
+                                  ),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
                     );
-                  },
+                  }).toList(),
                 ),
               ),
               Divider(

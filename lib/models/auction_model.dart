@@ -73,14 +73,26 @@ class AuctionModel extends Equatable {
     auctionStatus: '',
     images: [],
   );
+
+  List get listImage {
+    return images;
+  }
+
+  void addImage(UploadImage image) {
+    images.add(image);
+  }
+
+  void replaceImage(start, end, newImage) {
+    return images.replaceRange(start, end, newImage);
+  }
 }
 
 class UploadImage extends Equatable {
-  final File? imageFile;
+  final File imageFile;
   final String imageName;
 
   const UploadImage({
-    this.imageFile,
+    required this.imageFile,
     required this.imageName,
   });
 
@@ -95,5 +107,5 @@ class UploadImage extends Equatable {
   }
 
   @override
-  List<Object> get props => [imageFile!, imageName];
+  List<Object> get props => [imageFile, imageName];
 }

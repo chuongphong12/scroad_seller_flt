@@ -26,7 +26,7 @@ class AddPlateNumberEvent extends AuctionEvent {
 }
 
 class AddImagesEvent extends AuctionEvent {
-  final Image images;
+  final UploadImage images;
 
   const AddImagesEvent({required this.images});
 
@@ -47,7 +47,8 @@ class UpdateAuctionStatusEvent extends AuctionEvent {
   final String auctionId;
   final String auctionStatus;
 
-  const UpdateAuctionStatusEvent({required this.auctionId, required this.auctionStatus});
+  const UpdateAuctionStatusEvent(
+      {required this.auctionId, required this.auctionStatus});
 
   @override
   List<Object> get props => [auctionId, auctionStatus];

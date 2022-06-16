@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:scroad_seller_flutter/models/auction_model.dart';
 
 part 'auction_event.dart';
@@ -15,11 +14,13 @@ class AuctionBloc extends Bloc<AuctionEvent, AuctionState> {
     on<UpdateAuctionStatusEvent>(_onUpdateAuctionStatus);
   }
 
-  void _onInitAuction(InitializeAuctionEvent event, Emitter<AuctionState> emit) async {
+  void _onInitAuction(
+      InitializeAuctionEvent event, Emitter<AuctionState> emit) async {
     emit(AuctionLoaded(auction: event.auction));
   }
 
-  void _onAddPlateNumber(AddPlateNumberEvent event, Emitter<AuctionState> emit) async {
+  void _onAddPlateNumber(
+      AddPlateNumberEvent event, Emitter<AuctionState> emit) async {
     final AuctionModel auction = (state as AuctionLoaded).auction;
     try {
       emit(
@@ -28,19 +29,34 @@ class AuctionBloc extends Bloc<AuctionEvent, AuctionState> {
         ),
       );
     } catch (e) {
-      emit(AuctionError());
+      emit(AuctionError(message: e.toString()));
     }
   }
 
   void _onAddImages(AddImagesEvent event, Emitter<AuctionState> emit) {
-    print('AddImagesEvent');
+    final AuctionModel auction = (state as AuctionLoaded).auction;
+    try {
+      emit(
+        AuctionLoaded(
+          auction: auction.copyWith(
+            images: [
+              ...auction.images,
+              event.images,
+            ],
+          ),
+        ),
+      );
+    } catch (e) {
+      emit(AuctionError(message: e.toString()));
+    }
   }
 
   void _onLoadAuction(LoadAuctionEvent event, Emitter<AuctionState> emit) {
     print('LoadAuctionEvent');
   }
 
-  void _onUpdateAuctionStatus(UpdateAuctionStatusEvent event, Emitter<AuctionState> emit) {
+  void _onUpdateAuctionStatus(
+      UpdateAuctionStatusEvent event, Emitter<AuctionState> emit) {
     print('UpdateAuctionStatusEvent');
   }
 }

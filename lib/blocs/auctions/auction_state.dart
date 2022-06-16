@@ -20,4 +20,11 @@ class AuctionLoaded extends AuctionState {
   List<Object> get props => [auction];
 }
 
-class AuctionError extends AuctionState {}
+class AuctionError extends AuctionState {
+  final String message;
+
+  const AuctionError({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
