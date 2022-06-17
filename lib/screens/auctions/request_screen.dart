@@ -3,13 +3,26 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scroad_seller_flutter/blocs/auctions/auction_bloc.dart';
 import 'package:scroad_seller_flutter/extensions/hexadecimal_convert.dart';
-import 'package:scroad_seller_flutter/models/auction_model.dart';
 import 'package:scroad_seller_flutter/screens/home/home_screen.dart';
 import 'package:scroad_seller_flutter/widgets/custom_app_bar.dart';
+
+class SelectedImage {
+  final String side;
+  final String sideText;
+  File? file;
+
+  SelectedImage({
+    required this.side,
+    required this.sideText,
+    this.file,
+  });
+}
 
 class RequestScreen extends StatefulWidget {
   static const String routeName = '/request';
@@ -29,9 +42,31 @@ class RequestScreen extends StatefulWidget {
 
 class _RequestScreenState extends State<RequestScreen> {
   final ImagePicker _imagePicker = ImagePicker();
-  File? image;
+  File? frontImage;
+  File? backImage;
+  File? leftImage;
+  File? rightImage;
 
-  final List vehicleTexts = ['정면(필수)', '후면(필수)', '좌측(필수)', '우측(필수)'];
+  final List<SelectedImage> vehicleTexts = [
+    SelectedImage(
+      side: 'front',
+      sideText: '정면(필수)',
+    ),
+    SelectedImage(
+      sideText: '후면(필수)',
+      side: 'back',
+    ),
+    SelectedImage(
+      sideText: '좌측(필수)',
+      side: 'left',
+    ),
+    SelectedImage(
+      sideText: '우측(필수)',
+      side: 'right',
+    ),
+  ];
+
+  final List<File> listImage = [];
 
   final _formKey = GlobalKey<FormBuilderState>();
 
@@ -40,19 +75,68 @@ class _RequestScreenState extends State<RequestScreen> {
     super.initState();
   }
 
-  Future _addImageOnClick(ImageSource source, int index) async {
+  Future _addImageOnClick(ImageSource source, String side) async {
     final selectedImage = await _imagePicker.pickImage(source: source);
     if (selectedImage == null) {
       return;
     }
     final tempImage = File(selectedImage.path);
-    _getFileImage(index, tempImage, selectedImage.name);
+    switch (side) {
+      case 'front':
+        var index = 0;
+
+        if (listImage.contains(vehicleTexts[0].file!)) {
+          setState(() {
+            frontImage = tempImage;
+            vehicleTexts[index].file = frontImage;
+            listImage.replaceRange(index, index + 1, [frontImage!]);
+          });
+        } else {
+          setState(() {
+            frontImage = tempImage;
+            vehicleTexts[index].file = frontImage;
+            listImage.add(frontImage!);
+          });
+        }
+        break;
+      case 'back':
+        var index = 1;
+        if (listImage.contains(vehicleTexts[1].file)) {
+          setState(() {
+            backImage = tempImage;
+            vehicleTexts[index].file = backImage;
+            listImage.replaceRange(index, index + 1, [backImage!]);
+          });
+        } else {
+          setState(() {
+            backImage = tempImage;
+            vehicleTexts[index].file = backImage;
+            listImage.add(backImage!);
+          });
+        }
+        break;
+      case 'left':
+        setState(() {
+          leftImage = tempImage;
+          vehicleTexts[2].file = leftImage;
+        });
+        break;
+      case 'right':
+        setState(() {
+          rightImage = tempImage;
+          vehicleTexts[3].file = rightImage;
+        });
+        break;
+    }
   }
 
-  void _getFileImage(int index, File imagePath, String imageName) async {
-    UploadImage imageUpload =
-        UploadImage(imageFile: imagePath, imageName: imageName);
-    context.read<AuctionBloc>().add(AddImagesEvent(images: imageUpload));
+  void _getFileImage(List<File> images) async {
+    images.map((e) {
+      print(e.path);
+    }).toList();
+    // UploadImage imageUpload =
+    //     UploadImage(imageFile: imagePath, imageName: imageName);
+    // context.read<AuctionBloc>().add(AddImagesEvent(images: imageUpload));
   }
 
   @override
@@ -124,13 +208,16 @@ class _RequestScreenState extends State<RequestScreen> {
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: GridView.count(
+                child: GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  children: List.generate(vehicleTexts.length, (index) {
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemCount: vehicleTexts.length,
+                  itemBuilder: (BuildContext context, int index) {
                     return BlocBuilder<AuctionBloc, AuctionState>(
                       builder: (context, state) {
                         if (state is AuctionLoading) {
@@ -155,7 +242,8 @@ class _RequestScreenState extends State<RequestScreen> {
                                         TextButton(
                                           onPressed: () async {
                                             _addImageOnClick(
-                                                ImageSource.gallery, index);
+                                                ImageSource.gallery,
+                                                vehicleTexts[index].side);
                                             Navigator.pop(context);
                                           },
                                           child: Text(
@@ -167,8 +255,8 @@ class _RequestScreenState extends State<RequestScreen> {
                                         ),
                                         TextButton(
                                           onPressed: () async {
-                                            _addImageOnClick(
-                                                ImageSource.camera, index);
+                                            _addImageOnClick(ImageSource.camera,
+                                                vehicleTexts[index].side);
                                             Navigator.pop(context);
                                           },
                                           child: Text(
@@ -195,18 +283,63 @@ class _RequestScreenState extends State<RequestScreen> {
                                 },
                               );
                             },
-                            child: (state.auction.images.isNotEmpty &&
-                                    state.auction.images[index] ==
-                                        vehicleTexts[index])
+                            child: vehicleTexts[index].file != null
                                 ? Container(
                                     decoration: BoxDecoration(
                                       borderRadius: const BorderRadius.only(
-                                          bottomLeft: Radius.circular(20)),
+                                        bottomLeft: Radius.circular(20),
+                                      ),
                                       color: HexColor.fromHex('#e3e3e3'),
                                     ),
-                                    child: Image.file(
-                                      state.auction.images[index].imageFile,
-                                      fit: BoxFit.cover,
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(20),
+                                      ),
+                                      child: FocusedMenuHolder(
+                                        menuWidth:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
+                                        blurSize: 5.0,
+                                        menuItemExtent: 45,
+                                        menuBoxDecoration: const BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(15.0),
+                                          ),
+                                        ),
+                                        duration: const Duration(
+                                          milliseconds: 100,
+                                        ),
+                                        animateMenuItems: true,
+                                        blurBackgroundColor: Colors.black54,
+                                        bottomOffsetHeight: 200,
+                                        menuOffset: 10,
+                                        menuItems: <FocusedMenuItem>[
+                                          FocusedMenuItem(
+                                            title: const Text(
+                                              "Delete",
+                                              style: TextStyle(
+                                                color: Colors.redAccent,
+                                              ),
+                                            ),
+                                            trailingIcon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.redAccent,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                vehicleTexts[index].file = null;
+                                                listImage.removeAt(index);
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                        onPressed: () {},
+                                        child: Image.file(
+                                          vehicleTexts[index].file!,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
                                   )
                                 : Container(
@@ -238,7 +371,7 @@ class _RequestScreenState extends State<RequestScreen> {
                                               padding:
                                                   const EdgeInsets.all(2.0),
                                               child: Text(
-                                                vehicleTexts[index],
+                                                vehicleTexts[index].sideText,
                                               ),
                                             ),
                                           ),
@@ -252,7 +385,7 @@ class _RequestScreenState extends State<RequestScreen> {
                         }
                       },
                     );
-                  }).toList(),
+                  },
                 ),
               ),
               Divider(
@@ -424,7 +557,7 @@ class _RequestScreenState extends State<RequestScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: null,
                   style: ElevatedButton.styleFrom(
                     elevation: 6,
                     minimumSize: const Size(double.maxFinite, 60),

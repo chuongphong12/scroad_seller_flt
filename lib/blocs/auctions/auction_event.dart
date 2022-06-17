@@ -26,7 +26,7 @@ class AddPlateNumberEvent extends AuctionEvent {
 }
 
 class AddImagesEvent extends AuctionEvent {
-  final UploadImage images;
+  final List<UploadImage> images;
 
   const AddImagesEvent({required this.images});
 

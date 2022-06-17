@@ -39,10 +39,7 @@ class AuctionBloc extends Bloc<AuctionEvent, AuctionState> {
       emit(
         AuctionLoaded(
           auction: auction.copyWith(
-            images: [
-              ...auction.images,
-              event.images,
-            ],
+            images: event.images,
           ),
         ),
       );

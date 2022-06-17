@@ -38,17 +38,18 @@ dependencies:
   equatable: ^2.0.3
   flutter_svg: ^1.1.0
   dio: ^4.0.6
-  firebase_core: ^1.17.1
-  cloud_firestore: ^3.1.17
+  firebase_core: ^1.18.0
+  cloud_firestore: ^3.1.18
   flutter_rating_bar: ^4.0.1
-  syncfusion_flutter_datepicker: ^20.1.58
+  syncfusion_flutter_datepicker: ^20.1.60
   carousel_slider: ^4.1.1
   smooth_page_indicator: ^1.0.0+2
   expandable: ^5.0.1
   image_picker: ^0.8.5+3
   path_provider: ^2.0.11
-  flutter_form_builder: ^7.3.0
+  flutter_form_builder: ^7.3.1
   form_builder_validators: ^8.1.1
+  focused_menu: ^1.0.5
 
 dev_dependencies:
   flutter_test:
