@@ -6,14 +6,14 @@ class SimpleBlocObserver extends BlocObserver {
   void onEvent(Bloc bloc, Object? event) {
     super.onEvent(bloc, event);
     if (kDebugMode) {
-      print('${bloc.runtimeType} $event');
+      debugPrint('${bloc.runtimeType} $event');
     }
   }
 
   @override
   void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
     if (kDebugMode) {
-      print('${bloc.runtimeType} $error');
+      debugPrint('${bloc.runtimeType} $error');
     }
     super.onError(bloc, error, stackTrace);
   }
@@ -22,7 +22,7 @@ class SimpleBlocObserver extends BlocObserver {
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
     if (kDebugMode) {
-      print(transition);
+      debugPrint(transition.toString());
     }
   }
 }

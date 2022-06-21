@@ -12,12 +12,12 @@ class AuctionInitial extends AuctionState {}
 class AuctionLoading extends AuctionState {}
 
 class AuctionLoaded extends AuctionState {
-  final AuctionModel auction;
+  final List<AuctionModel> auctions;
 
-  const AuctionLoaded({required this.auction});
+  const AuctionLoaded({required this.auctions});
 
   @override
-  List<Object> get props => [auction];
+  List<Object> get props => [auctions];
 }
 
 class AuctionError extends AuctionState {

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:scroad_seller_flutter/blocs/auctions/auction_bloc.dart';
 import 'package:scroad_seller_flutter/extensions/hexadecimal_convert.dart';
 import 'package:scroad_seller_flutter/screens/auctions/request_screen.dart';
 import 'package:scroad_seller_flutter/widgets/custom_app_bar.dart';
@@ -91,10 +89,9 @@ class PlateNumberScreen extends StatelessWidget {
 
     void onSubmit() {
       if (controller.text.isNotEmpty) {
-        context
-            .read<AuctionBloc>()
-            .add(AddPlateNumberEvent(plateNumber: controller.text));
-        Navigator.of(context).pushNamed(RequestScreen.routeName);
+        Navigator.of(context).pushNamed(RequestScreen.routeName, arguments: {
+          'plateNumber': controller.text,
+        });
       }
       if (controller.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(

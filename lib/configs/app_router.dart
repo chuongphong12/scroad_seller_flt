@@ -3,6 +3,7 @@ import 'package:scroad_seller_flutter/screens/auctions/plate_number_screen.dart'
 import 'package:scroad_seller_flutter/screens/auctions/request_screen.dart';
 import 'package:scroad_seller_flutter/screens/guidance/guidance_screen.dart';
 import 'package:scroad_seller_flutter/screens/home/home_screen.dart';
+import 'package:scroad_seller_flutter/screens/ongoing/ongoing_screen.dart';
 import 'package:scroad_seller_flutter/screens/settings/settings_screen.dart';
 
 class AppRouter {
@@ -13,11 +14,14 @@ class AppRouter {
       case PlateNumberScreen.routeName:
         return PlateNumberScreen.route();
       case RequestScreen.routeName:
-        return RequestScreen.route();
+        final Map argument = settings.arguments as Map;
+        return RequestScreen.route(argument);
       case SettingsScreen.routeName:
         return SettingsScreen.route();
       case GuidanceScreen.routeName:
         return GuidanceScreen.route();
+      case OngoingScreen.routeName:
+        return OngoingScreen.route();
       default:
         return _errorRoute();
     }

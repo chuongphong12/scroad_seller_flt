@@ -8,24 +8,22 @@ part 'auction_state.dart';
 class AuctionBloc extends Bloc<AuctionEvent, AuctionState> {
   AuctionBloc() : super(AuctionLoading()) {
     on<InitializeAuctionEvent>(_onInitAuction);
-    on<AddPlateNumberEvent>(_onAddPlateNumber);
-    on<AddImagesEvent>(_onAddImages);
-    on<LoadAuctionEvent>(_onLoadAuction);
+    on<AddAuctionEvent>(_onAddAuction);
+    on<LoadAuctionEvent>(_onLoadAuctions);
     on<UpdateAuctionStatusEvent>(_onUpdateAuctionStatus);
   }
 
   void _onInitAuction(
       InitializeAuctionEvent event, Emitter<AuctionState> emit) async {
-    emit(AuctionLoaded(auction: event.auction));
+    emit(const AuctionLoaded(auctions: []));
   }
 
-  void _onAddPlateNumber(
-      AddPlateNumberEvent event, Emitter<AuctionState> emit) async {
-    final AuctionModel auction = (state as AuctionLoaded).auction;
+  void _onAddAuction(AddAuctionEvent event, Emitter<AuctionState> emit) {
     try {
-      emit(
-        AuctionLoaded(
-          auction: auction.copyWith(plateNumber: event.plateNumber),
+      emit(AuctionLoading());
+      add(
+        LoadAuctionEvent(
+          auctions: [...(state as AuctionLoaded).auctions, event.auction],
         ),
       );
     } catch (e) {
@@ -33,23 +31,12 @@ class AuctionBloc extends Bloc<AuctionEvent, AuctionState> {
     }
   }
 
-  void _onAddImages(AddImagesEvent event, Emitter<AuctionState> emit) {
-    final AuctionModel auction = (state as AuctionLoaded).auction;
+  void _onLoadAuctions(LoadAuctionEvent event, Emitter<AuctionState> emit) {
     try {
-      emit(
-        AuctionLoaded(
-          auction: auction.copyWith(
-            images: event.images,
-          ),
-        ),
-      );
+      emit(AuctionLoaded(auctions: event.auctions));
     } catch (e) {
       emit(AuctionError(message: e.toString()));
     }
-  }
-
-  void _onLoadAuction(LoadAuctionEvent event, Emitter<AuctionState> emit) {
-    print('LoadAuctionEvent');
   }
 
   void _onUpdateAuctionStatus(
