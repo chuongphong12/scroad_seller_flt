@@ -7,31 +7,22 @@ abstract class AuctionEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class InitializeAuctionEvent extends AuctionEvent {}
+class InitializeAuction extends AuctionEvent {}
 
-class AddAuctionEvent extends AuctionEvent {
+class AddAuction extends AuctionEvent {
   final AuctionModel auction;
 
-  const AddAuctionEvent({required this.auction});
+  const AddAuction({required this.auction});
 
   @override
   List<Object> get props => [auction];
 }
 
-class LoadAuctionEvent extends AuctionEvent {
-  final List<AuctionModel> auctions;
-
-  const LoadAuctionEvent({required this.auctions});
-
-  @override
-  List<Object> get props => [auctions];
-}
-
-class UpdateAuctionStatusEvent extends AuctionEvent {
+class UpdateAuctionStatus extends AuctionEvent {
   final String auctionId;
   final String auctionStatus;
 
-  const UpdateAuctionStatusEvent(
+  const UpdateAuctionStatus(
       {required this.auctionId, required this.auctionStatus});
 
   @override

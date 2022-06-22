@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuctionBloc>(
-          create: (context) => AuctionBloc()..add(InitializeAuctionEvent()),
+          create: (context) => AuctionBloc()..add(InitializeAuction()),
         ),
       ],
       child: MaterialApp(

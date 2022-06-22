@@ -178,7 +178,7 @@ class _RequestScreenState extends State<RequestScreen> {
     _formKey.currentState!.save();
     if (_formKey.currentState!.validate()) {
       context.read<AuctionBloc>().add(
-            AddAuctionEvent(
+            AddAuction(
               auction: AuctionModel(
                 auctionStatus: 'request',
                 description:
@@ -202,7 +202,6 @@ class _RequestScreenState extends State<RequestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final auctionBloc = context.read<AuctionBloc>();
     Map argument = ModalRoute.of(context)?.settings.arguments as Map;
     return Scaffold(
       appBar: const CustomAppBar(pushNavigator: HomeScreen.routeName),
@@ -477,7 +476,6 @@ class _RequestScreenState extends State<RequestScreen> {
               const SizedBox(height: 40),
               FormBuilder(
                 key: _formKey,
-                autovalidateMode: AutovalidateMode.disabled,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: Column(
@@ -536,11 +534,9 @@ class _RequestScreenState extends State<RequestScreen> {
                         validator: FormBuilderValidators.compose(
                           [
                             FormBuilderValidators.required(),
-                            FormBuilderValidators.numeric(),
-                            FormBuilderValidators.maxLength(11)
                           ],
                         ),
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.text,
                       ),
                       const SizedBox(height: 20),
                       FormBuilderDropdown(
