@@ -5,7 +5,7 @@ import 'package:scroad_seller_flutter/blocs/auctions/auction_bloc.dart';
 import 'package:scroad_seller_flutter/configs/app_router.dart';
 import 'package:scroad_seller_flutter/configs/theme.dart';
 import 'package:scroad_seller_flutter/firebase_options.dart';
-import 'package:scroad_seller_flutter/screens/home/home_screen.dart';
+import 'package:scroad_seller_flutter/screens/app.dart';
 import 'package:scroad_seller_flutter/simple_bloc_observer.dart';
 
 void main() async {
@@ -37,9 +37,9 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'SCRoad Seller',
         theme: theme(),
-        home: const HomeScreen(),
+        home: const AppScreen(),
         onGenerateRoute: AppRouter.onGenerateRoute,
-        initialRoute: HomeScreen.routeName,
+        initialRoute: AppScreen.routeName,
       ),
     );
   }

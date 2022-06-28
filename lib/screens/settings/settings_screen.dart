@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scroad_seller_flutter/widgets/custom_app_bar.dart';
+import 'package:scroad_seller_flutter/widgets/custom_bottom_bar.dart';
 
 class SettingsScreen extends StatelessWidget {
   static const String routeName = '/settings';

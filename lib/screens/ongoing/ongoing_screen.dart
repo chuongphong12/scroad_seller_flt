@@ -4,6 +4,7 @@ import 'package:scroad_seller_flutter/blocs/auctions/auction_bloc.dart';
 import 'package:scroad_seller_flutter/extensions/hexadecimal_convert.dart';
 import 'package:scroad_seller_flutter/models/auction_model.dart';
 import 'package:scroad_seller_flutter/widgets/custom_app_bar.dart';
+import 'package:scroad_seller_flutter/widgets/custom_bottom_bar.dart';
 
 class OngoingScreen extends StatelessWidget {
   static const String routeName = '/ongoing';
